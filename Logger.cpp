@@ -1,6 +1,6 @@
 #include <unordered_map>
 
-#include "Logger.h"
+#include "Logger.hpp"
 
 namespace {
   struct FS_EnumClassHash {
@@ -12,7 +12,9 @@ namespace {
 }
 
 Logger::Logger(Type type, std::string name, Level level)
-    : name_(std::move(name)), level_(level) {
+    : name_(std::move(name))
+    , level_(level)
+{
   if (type == Type::file) {
     filebuf_.open(name_ + ".log", std::ios_base::app);
     stream_ = new std::ostream(&filebuf_);
@@ -28,6 +30,30 @@ Logger::~Logger() {
   }
   delete stream_;
   delete null_;
+}
+
+std::ostream & Logger::trc() {
+  return getStream(Level::TRACE);
+}
+
+std::ostream & Logger::dbg() {
+  return getStream(Level::DEBUG);
+}
+
+std::ostream & Logger::inf() {
+  return getStream(Level::INFO);
+}
+
+std::ostream & Logger::wrn() {
+  return getStream(Level::WARN);
+}
+
+std::ostream & Logger::err() {
+  return getStream(Level::ERR);
+}
+
+std::ostream & Logger::crt() {
+  return getStream(Level::CRIT);
 }
 
 std::ostream &Logger::getStream(Level level) {
